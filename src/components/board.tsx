@@ -29,5 +29,3 @@ export function Board({ board, currentPlayer, onMove }: BoardProps) {
     </div>
   );
 }
-
-b;
