@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Piece } from './piece';
-import { BoardState, Player, Move } from '../types';
+import { BoardState, Player, Move } from '@/types';
 
 interface BoardProps {
   board: BoardState;
@@ -21,20 +21,13 @@ export function Board({ board, currentPlayer, onMove }: BoardProps) {
       setSelectedPiece(null);
     }
   };
-  console.log(board, 'bb')
+  console.log(board, 'bb');
 
   return (
     <div className="grid grid-cols-3 gap-2">
-      {board?.map((player, index) => (
-        <Piece 
-          key={index} 
-          player={player} 
-          onClick={() => handleClick(index)}
-        />
-      ))}
+      {board?.map((player, index) => <Piece key={index} player={player} onClick={() => handleClick(index)} />)}
     </div>
   );
 }
 
-b
-
+b;

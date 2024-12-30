@@ -13,6 +13,11 @@ export interface Point {
   y: number;
 }
 
+export interface Move {
+  from: number;
+  to: number;
+}
+
 export const VALID_MOVES: { [key: number]: number[] } = {
   0: [1, 2, 4], // Bottom-left to bottom-right and center
   1: [0, 4], // Top-left to center
