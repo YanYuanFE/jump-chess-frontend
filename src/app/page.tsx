@@ -1,30 +1,51 @@
 'use client';
 import { ConnectWallet } from '@/components/ConnectWallet';
+import { useDojoContext } from '@/components/DojoProvider';
 import Game from '@/components/game';
+import { Button } from '@/components/ui/button';
+import { useFetchContainers } from '@/hooks/useFetchData';
+import { useGameContract } from '@/hooks/useGameContract';
 import { useAccount } from '@starknet-react/core';
-import Image from 'next/image';
-import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-  const { address } = useAccount();
+  const { address, account } = useAccount();
+  const { data } = useFetchContainers();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!address) {
-      redirect('/login');
-    } else {
-      redirect('/game');
-    }
-  }, [address]);
+  const { client, db: sdk } = useDojoContext();
+  const { waitForTransaction } = useGameContract();
 
-  console.log(address);
+  const handleJoin = async (node: any) => {
+    const id = parseInt(node?.game_id, 16);
+    const tx = await client.actions.joiningGame(account as any, id);
+    const res = await waitForTransaction(tx?.transaction_hash);
+    console.log(res);
+    navigate(`/game/${id}`);
+  };
+
+  console.log(data);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-6">
-      <div>
+    <main className="container p-6">
+      <div className="flex justify-end">
         <ConnectWallet />
       </div>
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Game />
+      <div className="relative flex justify-end py-6">
+        <Button onClick={() => navigate('/create')}>Create Game</Button>
+      </div>
+      <div className="space-y-6">
+        {data?.dojoStarterContainerModels?.edges?.map((item: any) => {
+          const node = item?.node;
+          return (
+            <div key={item.id} className="flex gap-4 items-center">
+              <div>{parseInt(node?.game_id, 16)}、</div>
+              <div>{node?.creator}</div>
+              <div>Status: {node?.status}</div>
+              <Button onClick={() => handleJoin(node)}>Join</Button>
+            </div>
+          );
+        })}
       </div>
     </main>
   );

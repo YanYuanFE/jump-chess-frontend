@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 export default function GamePage() {
   const params = useParams<{ id: string }>();
   const { address } = useAccount();
-  const router = useRouter();
   const [gameState, setGameState] = useState<GameState>({
     board: ['GREEN', null, 'ORANGE', 'ORANGE', 'GREEN'],
     currentPlayer: 'GREEN',
@@ -17,7 +16,7 @@ export default function GamePage() {
     selectedPiece: null
   });
 
-  const { makeMove } = useGameSocket(params.id, (newState) => {
+  const { makeMove } = useGameSocket(params!.id!, (newState) => {
     setGameState((prev) => ({ ...prev, ...newState }));
   });
 

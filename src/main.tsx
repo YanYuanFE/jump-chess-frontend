@@ -6,6 +6,7 @@ import { DojoContainer } from './components/DojoProvider';
 import { init } from '@dojoengine/sdk';
 import { DojoStarterSchemaType, schema } from './dojo/typescript/models.gen';
 import { dojoConfig } from './constants/dojoConfig';
+import { globalConfig } from './constants';
 
 console.log(dojoConfig, 'dd');
 
@@ -17,7 +18,7 @@ async function main() {
         //   toriiUrl: "https://api.cartridge.gg/x/ryosepolia2/torii/graphql",
         //   toriiWsUrl: "wss://api.cartridge.gg/x/ryosepolia2/torii/graphql/ws",
         rpcUrl: dojoConfig.rpcUrl,
-        toriiUrl: 'http://127.0.0.1:8080',
+        toriiUrl: globalConfig.toriiUrl,
         relayUrl: dojoConfig.relayUrl,
         worldAddress: dojoConfig.manifest.world.address
       },

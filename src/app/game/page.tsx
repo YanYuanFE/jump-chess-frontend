@@ -5,15 +5,50 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAccount } from '@starknet-react/core';
 import { useGameContract } from '@/hooks/useGameContract';
 import { useDojoContext } from '@/components/DojoProvider';
+import { useEffect } from 'react';
+import { QueryBuilder } from '@dojoengine/sdk';
+import { DojoStarterSchemaType } from '@/dojo/typescript/models.gen';
+import { addAddressPadding } from 'starknet';
 
 export default function GameLobbyPage() {
   const { address, account } = useAccount();
-  const { client, db, masterAccount } = useDojoContext();
-  // console.log(client, db, masterAccount);
+  const { client, db: sdk } = useDojoContext();
   const { waitForTransaction } = useGameContract();
+
+  console.log(sdk, 'sdk');
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    const subscribe = async () => {
+      const subscription = await sdk?.subscribeEntityQuery({
+        query: new QueryBuilder<DojoStarterSchemaType>()
+          .namespace('dojo_starter', (n) => n.entity('Container', (e) => e.eq('creator', address)))
+          .build(),
+        callback: (response) => {
+          if (response.error) {
+            console.error('Error setting up entity sync:', response.error);
+          } else if (response.data) {
+            console.log('subscribed', response);
+          }
+        }
+      });
+
+      unsubscribe = () => subscription?.cancel();
+    };
+
+    subscribe();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [sdk, address]);
 
   const createGame = async () => {
     const tx = await client.actions.createGame(account as any);
+    console.log(tx, 'tx');
     const res = await waitForTransaction(tx?.transaction_hash);
     console.log(res);
     return;

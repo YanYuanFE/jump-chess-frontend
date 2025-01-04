@@ -8,5 +8,6 @@ export const globalConfig = {
   RPC_SEPOLIA: 'https://api.cartridge.gg/x/starknet/sepolia',
   KEYCHAIN_FRAME_URL: 'https://x.cartridge.gg',
   PROFILE_FRAME_URL: 'https://profile.cartridge.gg',
-  CARTRIDGE_API_URL: 'https://api.cartridge.gg'
+  CARTRIDGE_API_URL: 'https://api.cartridge.gg',
+  toriiUrl: 'http://127.0.0.1:8080'
 };

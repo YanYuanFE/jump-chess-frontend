@@ -5,6 +5,7 @@ import ControllerConnector from '@cartridge/connector/controller';
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { useStarknetkitConnectModal } from 'starknetkit';
+import { shortenAddress } from '@/lib/utils';
 
 export function ConnectWallet() {
   const { connect, connectors } = useConnect();
@@ -40,7 +41,7 @@ export function ConnectWallet() {
     <div>
       {address && (
         <>
-          <p>Account: {address} </p>
+          <p>{shortenAddress(address)} </p>
           {username && <p>Username: {username}</p>}
         </>
       )}
