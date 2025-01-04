@@ -1,25 +1,17 @@
-import { Inter } from 'next/font/google'
-import { getServerSession } from "next-auth/next"
-import SessionProvider from "@/components/session-provider"
-import './globals.css'
+import './globals.css';
+import { StarknetProvider } from '@/components/StarknetProvider';
+import { AuthProvider } from '@/components/AuthProvider';
+import { Toaster } from '@/components/ui/sonner';
+import { DojoContainer } from '@/components/DojoProvider';
+import { Outlet } from 'react-router-dom';
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const session = await getServerSession()
-
+export default function RootLayout() {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <SessionProvider session={session}>
-          {children}
-        </SessionProvider>
-      </body>
-    </html>
-  )
+    <StarknetProvider>
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
+      <Toaster />
+    </StarknetProvider>
+  );
 }
-
