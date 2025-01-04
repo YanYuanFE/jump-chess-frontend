@@ -54,6 +54,7 @@ export const useGameContract = () => {
 
   return {
     createGame,
-    joinGame
+    joinGame,
+    waitForTransaction
   };
 };
