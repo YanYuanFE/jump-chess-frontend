@@ -20,21 +20,62 @@ export default function GameLobbyPage() {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
+    // const subscribe = async () => {
+    //   const subscription = await sdk?.subscribeEntityQuery({
+    //     query: new QueryBuilder<DojoStarterSchemaType>()
+    //       .namespace('dojo_starter', (n) => n.entity('Container', (e) => true))
+    //       .build(),
+    //     callback: (response) => {
+    //       if (response.error) {
+    //         console.error('Error setting up entity sync:', response.error);
+    //       } else if (response.data) {
+    //         console.log('subscribed', response);
+    //       }
+    //     }
+    //   });
+    //
+    //   unsubscribe = () => subscription?.cancel();
+    // };
+
+    interface Container {
+      /** Player identifier */
+      game_id: string;
+      status: number;
+      creator: string;
+      last_move_player: string;
+    }
+
+    type Schema = {
+      dojo_starter: {
+        Container: Container;
+        //DirectionsAvailable: DirectionsAvailable;
+        //Position: Position;
+      };
+    };
+
     const subscribe = async () => {
       const subscription = await sdk?.subscribeEntityQuery({
-        query: new QueryBuilder<DojoStarterSchemaType>()
-          .namespace('dojo_starter', (n) => n.entity('Container', (e) => e.eq('creator', address)))
+        query: new QueryBuilder<Container>()
+          .namespace("dojo_starter", (n) =>
+            n
+              .entity("Container", (e) =>
+                true
+              )
+          )
           .build(),
         callback: (response) => {
           if (response.error) {
-            console.error('Error setting up entity sync:', response.error);
-          } else if (response.data) {
+            console.error(
+              "Error setting up entity sync:",
+              response.error
+            );
+          } else {
             console.log('subscribed', response);
           }
-        }
+        },
       });
 
-      unsubscribe = () => subscription?.cancel();
+      unsubscribe = () => subscription.cancel();
     };
 
     subscribe();
