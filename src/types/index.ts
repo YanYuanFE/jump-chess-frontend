@@ -33,3 +33,29 @@ export const POINT_COORDINATES: Point[] = [
   { x: 80, y: 20 }, // Top-right (3)
   { x: 50, y: 50 } // Center (4)
 ];
+
+export interface GameData {
+  entityId: string;
+  models: Models;
+}
+
+export interface Models {
+  dojo_starter: Dojostarter;
+}
+
+export interface Dojostarter {
+  Container: Container;
+}
+
+export interface Container {
+  game_id: number;
+  creator: string;
+  status: number;
+  last_move_player: string;
+  grids: Grid[];
+}
+
+export interface Grid {
+  name: number;
+  occupied: boolean;
+}

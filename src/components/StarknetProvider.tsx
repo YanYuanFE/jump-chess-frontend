@@ -1,7 +1,7 @@
 'use client';
 
 import { Chain, mainnet, sepolia } from '@starknet-react/chains';
-import { argent, jsonRpcProvider, publicProvider, StarknetConfig, starkscan } from '@starknet-react/core';
+import { argent, braavos, jsonRpcProvider, publicProvider, StarknetConfig, starkscan } from '@starknet-react/core';
 import { PropsWithChildren } from 'react';
 import ControllerConnector from '@cartridge/connector/controller';
 import { Policy } from '@cartridge/controller';
@@ -48,7 +48,7 @@ export function StarknetProvider({ children }: PropsWithChildren) {
     <StarknetConfig
       autoConnect
       chains={[sepolia]}
-      connectors={[controller, argent()]}
+      connectors={[controller, argent(), braavos()]}
       explorer={starkscan}
       provider={jsonRpcProvider({
         rpc: (chain: Chain) => {

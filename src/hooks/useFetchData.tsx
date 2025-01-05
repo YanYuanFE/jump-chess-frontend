@@ -54,3 +54,22 @@ export const useFetchContainers = (variables?: any) => {
     queryFn: useFetchData(ContainerQuery).bind(null, variables)
   }) as any;
 };
+
+const GameStatusQuery = `query DojostarterGameStatusEventEvents {
+  dojoStarterGameStatusEventModels {
+    totalCount
+    edges {
+      node {
+        game_id,
+        status
+      }
+    }
+  }
+}`;
+
+export const useFetchGameStatus = (variables?: any) => {
+  return useQuery({
+    queryKey: ['gameStatus'],
+    queryFn: useFetchData(GameStatusQuery).bind(null, variables)
+  }) as any;
+};
