@@ -48,14 +48,15 @@ export interface Dojostarter {
 }
 
 export interface Container {
-  game_id: number;
-  creator: string;
   status: number;
+  creator: string;
   last_move_player: string;
+  game_id: number;
   grids: Grid[];
 }
 
 export interface Grid {
+  player: string;
   name: number;
   occupied: boolean;
 }

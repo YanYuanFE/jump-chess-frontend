@@ -28,13 +28,14 @@ export default function Home() {
 
   const handleJoin = async (node: any) => {
     const id = parseInt(node?.game_id, 16);
-    if (addAddressPadding(node?.creator) === address) {
-      navigate(`/game/${node?.game_id}`);
-      return;
+    if (addAddressPadding(node?.creator) !== address && node?.status === 0) {
+      console.log(account, 'ac');
+      const tx = await client.actions.joiningGame(account as any, id);
+      console.log(tx, 'tx');
+      if (!tx) return;
+      const res = await waitForTransaction(tx?.transaction_hash);
+      console.log(res);
     }
-    const tx = await client.actions.joiningGame(account as any, id);
-    const res = await waitForTransaction(tx?.transaction_hash);
-    console.log(res);
     navigate(`/game/${node?.game_id}`);
   };
 
@@ -51,8 +52,9 @@ export default function Home() {
           return (
             <div key={item.id} className="space-y-6">
               <div className="flex gap-4 items-center">
-                <div>{parseInt(node?.game_id, 16)}、</div>
-                <div>{node?.creator}</div>
+                <div>
+                  {parseInt(node?.game_id, 16)}、{node?.creator}
+                </div>
                 <Badge variant={'secondary'}>{GameStatusMap[node?.status as keyof typeof GameStatusMap]}</Badge>
                 <Button onClick={() => handleJoin(node)}>Join</Button>
               </div>

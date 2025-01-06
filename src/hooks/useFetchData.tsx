@@ -42,7 +42,6 @@ const ContainerQuery = `query DojostarterContainerModels {
         status
         creator
         last_move_player,
-        
       }
     }
   }
@@ -61,7 +60,7 @@ const GameStatusQuery = `query DojostarterGameStatusEventEvents {
     edges {
       node {
         game_id,
-        status
+        status,
       }
     }
   }

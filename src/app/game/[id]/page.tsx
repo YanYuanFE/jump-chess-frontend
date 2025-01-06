@@ -11,6 +11,7 @@ import { QueryBuilder } from '@dojoengine/sdk';
 import { DojoStarterSchemaType } from '@/dojo/typescript/models.gen';
 import { useFetchGameStatus } from '@/hooks/useFetchData';
 import { Header } from '@/components/Header';
+import { WaitingForOpponentMove, WaitingForYourMove, WaitingJoin } from '@/components/WaitingAnimation';
 
 const GameStatusMap = {
   0: 'Wait for player join',
@@ -35,7 +36,21 @@ export default function GamePage() {
 
   console.log(sdk, data, 'sdk');
 
-  const updateGameState = (game: Container) => {};
+  const updateGameState = (game: Container) => {
+    const board: any = [];
+    game.grids.forEach((grid) => {
+      if (grid.occupied) {
+        board[grid.name] = grid.player === address ? 'GREEN' : 'ORANGE';
+      } else {
+        board[grid.name] = null;
+      }
+    });
+    setGameState({
+      ...gameState,
+      board,
+      currentPlayer: game.last_move_player === address ? 'ORANGE' : 'GREEN'
+    });
+  };
 
   useEffect(() => {
     if (data) {
@@ -47,6 +62,38 @@ export default function GamePage() {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    const fetchEntities = async () => {
+      console.log(parseInt(params!.id!, 16), 'pp');
+      try {
+        await sdk?.getEntities({
+          query: new QueryBuilder<DojoStarterSchemaType>()
+            .namespace('dojo_starter', (n) =>
+              n.entity('Container', (e) => {
+                return true;
+                console.log(e.eq('game_id', parseInt(params!.id!, 16)), 'cc');
+                return e.eq('game_id', parseInt(params!.id!, 16));
+              })
+            )
+            .build(),
+          callback: (resp) => {
+            if (resp.error) {
+              console.error('resp.error.message:', resp.error.message);
+              return;
+            }
+            if (resp.data) {
+              console.log(resp.data, 'res');
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error querying entities:', error);
+      }
+    };
+
+    fetchEntities();
+  }, [sdk, params]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -68,10 +115,12 @@ export default function GamePage() {
             console.error('Error setting up entity sync:', response.error);
           } else if (response.data && response.data[0].entityId !== '0x0') {
             console.log('subscribed', response);
-            const game = (response as GameData).models.dojo_starter.Container;
-            setStatus(game.status);
-            updateGameState(game);
-            refetch();
+            const game = (response.data[0] as GameData).models?.dojo_starter?.Container;
+            if (game) {
+              setStatus(game.status);
+              updateGameState(game);
+              refetch();
+            }
           }
         }
       });
@@ -98,7 +147,16 @@ export default function GamePage() {
     <div className="min-h-screen bg-gray-100">
       <Header />
       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-60px)]">
-        <div className="my-6">Game Status: {GameStatusMap[status as keyof typeof GameStatusMap]}</div>
+        <div className="my-4">Game Status: {GameStatusMap[status as keyof typeof GameStatusMap]}</div>
+        <div>
+          {status === 0 ? (
+            <WaitingJoin />
+          ) : gameState.currentPlayer === 'GREEN' ? (
+            <WaitingForYourMove />
+          ) : (
+            <WaitingForOpponentMove />
+          )}
+        </div>
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <GameBoard
             board={gameState.board}
@@ -109,9 +167,9 @@ export default function GamePage() {
           />
           <div className="mt-4 text-center">
             {gameState.winner ? (
-              <p className="text-xl font-semibold">{`${gameState.winner === 'GREEN' ? '绿色' : '橙色'} Player Wins!`}</p>
+              <p className="text-xl font-semibold">{`${gameState.winner === 'GREEN' ? 'Green' : 'Orange'} Player Wins!`}</p>
             ) : (
-              <p className="text-xl">Current Player: {gameState.currentPlayer === 'GREEN' ? '绿色' : '橙色'}</p>
+              <p className="text-xl">Current Player: {gameState.currentPlayer === 'GREEN' ? 'Green' : 'Orange'}</p>
             )}
           </div>
         </div>

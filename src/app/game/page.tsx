@@ -8,14 +8,17 @@ import { useDojoContext } from '@/components/DojoProvider';
 import { useEffect } from 'react';
 import { QueryBuilder } from '@dojoengine/sdk';
 import { DojoStarterSchemaType } from '@/dojo/typescript/models.gen';
-import { addAddressPadding } from 'starknet';
+import { addAddressPadding, validateAndParseAddress } from 'starknet';
+import { useNavigate } from 'react-router-dom';
+import { Header } from '@/components/Header';
 
 export default function GameLobbyPage() {
   const { address, account } = useAccount();
   const { client, db: sdk } = useDojoContext();
   const { waitForTransaction } = useGameContract();
+  const navigate = useNavigate();
 
-  console.log(sdk, 'sdk');
+  // console.log(validateAndParseAddress(address!), 'sdk');
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -55,27 +58,24 @@ export default function GameLobbyPage() {
 
     const subscribe = async () => {
       const subscription = await sdk?.subscribeEntityQuery({
-        query: new QueryBuilder<Container>()
-          .namespace("dojo_starter", (n) =>
-            n
-              .entity("Container", (e) =>
-                true
-              )
+        query: new QueryBuilder<DojoStarterSchemaType>()
+          .namespace('dojo_starter', (n) =>
+            n.entity('Container', (e) => {
+              console.log(e);
+              return e.eq('creator', addAddressPadding(address!));
+            })
           )
           .build(),
         callback: (response) => {
           if (response.error) {
-            console.error(
-              "Error setting up entity sync:",
-              response.error
-            );
+            console.error('Error setting up entity sync:', response.error);
           } else {
             console.log('subscribed', response);
           }
-        },
+        }
       });
 
-      unsubscribe = () => subscription.cancel();
+      unsubscribe = () => subscription?.cancel();
     };
 
     subscribe();
@@ -92,25 +92,26 @@ export default function GameLobbyPage() {
     console.log(tx, 'tx');
     const res = await waitForTransaction(tx?.transaction_hash);
     console.log(res);
-    return;
-    const gameId = Math.random().toString(36).substring(7);
-    // router.push(`/game/${gameId}`);
+    navigate('/');
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Game Lobby</CardTitle>
-          <CardDescription>Create or Join a game</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Button className="w-full" onClick={createGame}>
-            Create Game
-          </Button>
-          {/* TODO: Add list of available games */}
-        </CardContent>
-      </Card>
+    <div className="bg-gray-100">
+      <Header />
+      <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-60px)]">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Game Lobby</CardTitle>
+            <CardDescription>Create or Join a game</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button className="w-full" onClick={createGame}>
+              Create Game
+            </Button>
+            {/* TODO: Add list of available games */}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

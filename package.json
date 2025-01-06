@@ -6,7 +6,8 @@
     "dev": "vite --force",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "torii": "torii --world 0x73d60669ce1609d6af78b9af7ee862040b8fbacb4212339beac264468c3d617  --http.cors_origins '*' --rpc https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
   },
   "dependencies": {
     "@cartridge/connector": "^0.5.5",
@@ -92,6 +93,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "vite": "^6.0.7",
+    "vite-plugin-mkcert": "^1.17.6",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.4.1"
   },
