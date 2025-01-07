@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { GameBoard } from '@/components/game-board';
 import { useGameSocket } from '@/hooks/useGameSocket';
-import { Container, GameData, GameState } from '@/types';
+import { Container, GameData, GameState, Player } from '@/types';
 import { useAccount } from '@starknet-react/core';
 import { useParams } from 'react-router-dom';
 import { useDojoContext } from '@/components/DojoProvider';
@@ -26,7 +26,8 @@ export default function GamePage() {
     board: ['GREEN', null, 'ORANGE', 'ORANGE', 'GREEN'],
     currentPlayer: 'GREEN',
     winner: null,
-    selectedPiece: null
+    selectedPiece: null,
+    lastMove: ''
   });
 
   const { client, db: sdk } = useDojoContext();
@@ -34,22 +35,67 @@ export default function GamePage() {
   const { data, refetch } = useFetchGameStatus();
   const [status, setStatus] = useState(0);
 
-  console.log(sdk, data, 'sdk');
+  console.log(sdk, gameState, 'state');
 
   const updateGameState = (game: Container) => {
+    console.log(game, 'game');
     const board: any = [];
+    // 给creator地址分配 GREEN
     game.grids.forEach((grid) => {
       if (grid.occupied) {
-        board[grid.name] = grid.player === address ? 'GREEN' : 'ORANGE';
+        board[grid.name] = grid.player === game.creator ? 'GREEN' : 'ORANGE';
       } else {
         board[grid.name] = null;
       }
     });
+    const isCreator = game.creator === address;
+
+    let currentPlayer;
+    if (game.last_move_player !== address) {
+      currentPlayer = isCreator ? 'GREEN' : 'ORANGE';
+    } else {
+      currentPlayer = isCreator ? 'ORANGE' : 'GREEN';
+    }
+
     setGameState({
       ...gameState,
       board,
-      currentPlayer: game.last_move_player === address ? 'ORANGE' : 'GREEN'
+      currentPlayer: currentPlayer as Player,
+      lastMove: game.last_move_player
     });
+  };
+
+  const fetchEntities = async (status: number) => {
+    const query = new QueryBuilder<DojoStarterSchemaType>()
+      .namespace('dojo_starter', (n) =>
+        n.entity('Container', (e) => {
+          return e.eq('status', status);
+        })
+      )
+      .build();
+    try {
+      await sdk?.getEntities({
+        query: query,
+        callback: (resp) => {
+          if (resp.error) {
+            console.error('resp.error.message:', resp.error.message);
+            return;
+          }
+          if (resp.data) {
+            console.log(resp.data, 'res');
+            const current = resp.data?.find(
+              (it: any) => it.models.dojo_starter?.Container.game_id === parseInt(params!.id!, 16)
+            );
+            if (current) {
+              updateGameState(current.models.dojo_starter.Container as any);
+            }
+            console.log(current, 'current');
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error querying entities:', error);
+    }
   };
 
   useEffect(() => {
@@ -59,41 +105,15 @@ export default function GamePage() {
       );
       if (current) {
         setStatus(current.node.status);
+        fetchEntities(current.node.status);
       }
     }
   }, [data]);
 
-  useEffect(() => {
-    const fetchEntities = async () => {
-      console.log(parseInt(params!.id!, 16), 'pp');
-      try {
-        await sdk?.getEntities({
-          query: new QueryBuilder<DojoStarterSchemaType>()
-            .namespace('dojo_starter', (n) =>
-              n.entity('Container', (e) => {
-                return true;
-                console.log(e.eq('game_id', parseInt(params!.id!, 16)), 'cc');
-                return e.eq('game_id', parseInt(params!.id!, 16));
-              })
-            )
-            .build(),
-          callback: (resp) => {
-            if (resp.error) {
-              console.error('resp.error.message:', resp.error.message);
-              return;
-            }
-            if (resp.data) {
-              console.log(resp.data, 'res');
-            }
-          }
-        });
-      } catch (error) {
-        console.error('Error querying entities:', error);
-      }
-    };
+  // useEffect(() => {
 
-    fetchEntities();
-  }, [sdk, params]);
+  //   fetchEntities();
+  // }, [sdk, status]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -151,7 +171,7 @@ export default function GamePage() {
         <div>
           {status === 0 ? (
             <WaitingJoin />
-          ) : gameState.currentPlayer === 'GREEN' ? (
+          ) : gameState.lastMove !== address ? (
             <WaitingForYourMove />
           ) : (
             <WaitingForOpponentMove />

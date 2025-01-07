@@ -6,6 +6,7 @@ export interface GameState {
   currentPlayer: Player;
   winner: Player | null;
   selectedPiece: number | null;
+  lastMove: string;
 }
 
 export interface Point {

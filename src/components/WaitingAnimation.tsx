@@ -34,8 +34,8 @@ export function WaitingForYourMove() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="mt-8 text-2xl font-bold text-gray-700">Now your turn{dots}</div>
+    <div className="flex flex-col items-center justify-center py-6">
+      <div className="text-2xl font-bold text-gray-700">Now your turn{dots}</div>
       <div className="mt-4">
         <div className="w-12 h-12 rounded-full bg-green-500 animate-bounce">
           <svg className="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,8 +59,8 @@ export function WaitingForOpponentMove() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="mt-8 text-2xl font-bold text-gray-700">Wait for the opponent to move{dots}</div>
+    <div className="flex flex-col items-center justify-center py-6">
+      <div className="text-2xl font-bold text-gray-700">Wait for the opponent to move{dots}</div>
       <div className="mt-4">
         <div className="w-12 h-12 rounded-full border-4 border-red-500 border-t-transparent animate-spin" />
       </div>
