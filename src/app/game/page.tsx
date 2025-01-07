@@ -11,6 +11,7 @@ import { DojoStarterSchemaType } from '@/dojo/typescript/models.gen';
 import { addAddressPadding, validateAndParseAddress } from 'starknet';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { GameData } from '@/types';
 
 export default function GameLobbyPage() {
   const { address, account } = useAccount();
@@ -18,45 +19,10 @@ export default function GameLobbyPage() {
   const { waitForTransaction } = useGameContract();
   const navigate = useNavigate();
 
-  // console.log(validateAndParseAddress(address!), 'sdk');
-
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
-
-    // const subscribe = async () => {
-    //   const subscription = await sdk?.subscribeEntityQuery({
-    //     query: new QueryBuilder<DojoStarterSchemaType>()
-    //       .namespace('dojo_starter', (n) => n.entity('Container', (e) => true))
-    //       .build(),
-    //     callback: (response) => {
-    //       if (response.error) {
-    //         console.error('Error setting up entity sync:', response.error);
-    //       } else if (response.data) {
-    //         console.log('subscribed', response);
-    //       }
-    //     }
-    //   });
-    //
-    //   unsubscribe = () => subscription?.cancel();
-    // };
-
-    interface Container {
-      /** Player identifier */
-      game_id: string;
-      status: number;
-      creator: string;
-      last_move_player: string;
-    }
-
-    type Schema = {
-      dojo_starter: {
-        Container: Container;
-        //DirectionsAvailable: DirectionsAvailable;
-        //Position: Position;
-      };
-    };
-
     const subscribe = async () => {
+      if (!address) return;
       const subscription = await sdk?.subscribeEntityQuery({
         query: new QueryBuilder<DojoStarterSchemaType>()
           .namespace('dojo_starter', (n) =>
@@ -69,8 +35,13 @@ export default function GameLobbyPage() {
         callback: (response) => {
           if (response.error) {
             console.error('Error setting up entity sync:', response.error);
-          } else {
+          } else if (response.data && response.data[0].entityId !== '0x0') {
             console.log('subscribed', response);
+            const game = (response.data[0] as GameData).models?.dojo_starter?.Container;
+            if (game) {
+              const gameId = game?.game_id?.toString(16);
+              navigate(`/game/0x${gameId}`);
+            }
           }
         }
       });
@@ -90,9 +61,7 @@ export default function GameLobbyPage() {
   const createGame = async () => {
     const tx = await client.actions.createGame(account as any);
     console.log(tx, 'tx');
-    const res = await waitForTransaction(tx?.transaction_hash);
-    console.log(res);
-    navigate('/');
+    await waitForTransaction(tx?.transaction_hash);
   };
 
   return (
@@ -108,7 +77,6 @@ export default function GameLobbyPage() {
             <Button className="w-full" onClick={createGame}>
               Create Game
             </Button>
-            {/* TODO: Add list of available games */}
           </CardContent>
         </Card>
       </div>

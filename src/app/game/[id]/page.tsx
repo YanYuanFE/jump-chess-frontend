@@ -11,7 +11,12 @@ import { QueryBuilder } from '@dojoengine/sdk';
 import { DojoStarterSchemaType } from '@/dojo/typescript/models.gen';
 import { useFetchGameStatus } from '@/hooks/useFetchData';
 import { Header } from '@/components/Header';
-import { WaitingForOpponentMove, WaitingForYourMove, WaitingJoin } from '@/components/WaitingAnimation';
+import {
+  WaitingForOpponentMove,
+  WaitingForPlayer,
+  WaitingForYourMove,
+  WaitingJoin
+} from '@/components/WaitingAnimation';
 
 const GameStatusMap = {
   0: 'Wait for player join',
@@ -110,11 +115,6 @@ export default function GamePage() {
     }
   }, [data]);
 
-  // useEffect(() => {
-
-  //   fetchEntities();
-  // }, [sdk, status]);
-
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
@@ -123,8 +123,6 @@ export default function GamePage() {
         query: new QueryBuilder<DojoStarterSchemaType>()
           .namespace('dojo_starter', (n) =>
             n.entity('Container', (e) => {
-              console.log(e.eq('game_id', params!.id!), 'update');
-              // return true;
               return e.eq('game_id', params!.id!);
             })
           )
@@ -170,7 +168,7 @@ export default function GamePage() {
         <div className="my-4">Game Status: {GameStatusMap[status as keyof typeof GameStatusMap]}</div>
         <div>
           {status === 0 ? (
-            <WaitingJoin />
+            <WaitingForPlayer />
           ) : gameState.lastMove !== address ? (
             <WaitingForYourMove />
           ) : (

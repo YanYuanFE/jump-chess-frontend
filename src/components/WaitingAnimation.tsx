@@ -1,4 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+
+export function WaitingForPlayer() {
+  const [dots, setDots] = useState('');
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+    }, 500);
+
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => (prev < 100 ? prev + 1 : 0));
+    }, 100);
+
+    return () => {
+      clearInterval(dotsInterval);
+      clearInterval(progressInterval);
+    };
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center text-foreground">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-card-foreground p-8 max-w-md w-full space-y-6"
+      >
+        <div className="flex justify-center">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}>
+            <Loader2 className="w-12 h-12 text-primary" />
+          </motion.div>
+        </div>
+        <p className="text-center text-lg">Waiting for another player to join{dots}</p>
+        <Progress value={progress} className="w-full" />
+      </motion.div>
+    </div>
+  );
+}
 
 export const WaitingJoin = () => {
   const [dots, setDots] = useState('');
