@@ -2,6 +2,50 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import confetti from 'canvas-confetti';
+
+interface GameOverProps {
+  isWinner: boolean;
+  onReturnToLobby: () => void;
+}
+
+export function GameOver({ isWinner, onReturnToLobby }: GameOverProps) {
+  useEffect(() => {
+    if (isWinner) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [isWinner]);
+
+  const emoji = isWinner ? '🏆' : '😢';
+  const message = isWinner ? 'Congratulations! You Won!' : 'Game Over. Better luck next time!';
+  const bgColor = isWinner ? 'bg-green-100' : 'bg-red-100';
+  const textColor = isWinner ? 'text-green-800' : 'text-red-800';
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`${bgColor} ${textColor} rounded-lg shadow-lg p-8 max-w-md w-full space-y-6 text-center`}
+      >
+        <div className="text-6xl mb-4">{emoji}</div>
+        <h2 className="text-3xl font-bold">{message}</h2>
+        <p className="text-xl">{isWinner ? "You've mastered the game! 🎉" : "Don't give up, keep practicing! 💪"}</p>
+        <div className="flex flex-col space-y-4">
+          <Button onClick={onReturnToLobby} variant="outline" size="lg">
+            Return to Lobby 🏠
+          </Button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export function WaitingForPlayer() {
   const [dots, setDots] = useState('');

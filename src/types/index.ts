@@ -4,7 +4,7 @@ export type BoardState = (Player | null)[];
 export interface GameState {
   board: BoardState;
   currentPlayer: Player;
-  winner: Player | null;
+  winner: string | null;
   selectedPiece: number | null;
   lastMove: string;
 }
@@ -54,6 +54,7 @@ export interface Container {
   last_move_player: string;
   game_id: number;
   grids: Grid[];
+  winner: string;
 }
 
 export interface Grid {

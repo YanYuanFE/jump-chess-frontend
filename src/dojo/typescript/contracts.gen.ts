@@ -1,9 +1,10 @@
 import { DojoProvider } from '@dojoengine/core';
-import { Account } from 'starknet';
+import { Account, AccountInterface, BigNumberish, CairoOption, CairoCustomEnum, ByteArray } from 'starknet';
 import * as models from './models.gen';
 
 export function setupWorld(provider: DojoProvider) {
-  const actions_createGame = async (snAccount: Account) => {
+  const actions_createGame = async (snAccount: Account | AccountInterface) => {
+    console.log(provider, snAccount, 'ss');
     try {
       return await provider.execute(
         snAccount,
@@ -19,7 +20,7 @@ export function setupWorld(provider: DojoProvider) {
     }
   };
 
-  const actions_joiningGame = async (snAccount: Account, gameId: number) => {
+  const actions_joiningGame = async (snAccount: Account | AccountInterface, gameId: BigNumberish) => {
     try {
       return await provider.execute(
         snAccount,
@@ -35,7 +36,12 @@ export function setupWorld(provider: DojoProvider) {
     }
   };
 
-  const actions_move = async (snAccount: Account, from: number, to: number, gameId: number) => {
+  const actions_move = async (
+    snAccount: Account | AccountInterface,
+    from: BigNumberish,
+    to: BigNumberish,
+    gameId: BigNumberish
+  ) => {
     try {
       return await provider.execute(
         snAccount,

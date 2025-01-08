@@ -6,7 +6,7 @@ import { createContext, useContext, useMemo } from 'react';
 import { Account } from 'starknet';
 import { DojoProvider } from '@dojoengine/core';
 import { useQuery } from '@tanstack/react-query';
-import { DojoStarterSchemaType, schema } from '@/dojo/typescript/models.gen';
+import { SchemaType, schema } from '@/dojo/typescript/models.gen';
 
 /**
  * Interface defining the shape of the Dojo context.
@@ -16,7 +16,7 @@ interface DojoContextType {
   //   masterAccount: Account;
   /** The Dojo client instance */
   client: ReturnType<typeof setupWorld>;
-  db: SDK<DojoStarterSchemaType> | undefined;
+  db: SDK<SchemaType> | undefined;
   /** The current burner account information */
   //   account: BurnerAccount;
 }
@@ -26,7 +26,7 @@ interface DojoContextType {
  */
 export const DojoContext = createContext<DojoContextType | null>(null);
 
-export const DojoContainer = ({ children, db }: { children: React.ReactNode; db: SDK<DojoStarterSchemaType> }) => {
+export const DojoContainer = ({ children, db }: { children: React.ReactNode; db: SDK<SchemaType> }) => {
   const dojoProvider = new DojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl);
 
   //   const masterAccount = useMemo(

@@ -28,9 +28,7 @@ export function GameRoomList() {
 
   const filteredRooms =
     rooms?.filter(
-      (room: any) =>
-        room.game_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.creator.toLowerCase().includes(searchTerm.toLowerCase())
+      (room: any) => room.game_id === searchTerm || room.creator.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
   console.log(filteredRooms);
 
