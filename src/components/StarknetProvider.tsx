@@ -6,9 +6,9 @@ import { PropsWithChildren } from 'react';
 import ControllerConnector from '@cartridge/connector/controller';
 import { Policy } from '@cartridge/controller';
 import { globalConfig } from '@/constants';
+import manifest from '../abi/manifest_dev.json';
 
-export const ETH_CONTRACT_ADDRESS = '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
-export const STRK_CONTRACT_ADDRESS = '0x03e1e1d591567a0268ce4f39e3dba774fd510cbea4cc428eff947d424375d225';
+export const STRK_CONTRACT_ADDRESS = manifest.contracts[0].address;
 
 const policies: Policy[] = [
   {

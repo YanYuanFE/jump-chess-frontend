@@ -27,7 +27,7 @@ export function GameOver({ isWinner, onReturnToLobby }: GameOverProps) {
   const textColor = isWinner ? 'text-green-800' : 'text-red-800';
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center bg-gray-100">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -47,40 +47,87 @@ export function GameOver({ isWinner, onReturnToLobby }: GameOverProps) {
   );
 }
 
-export function WaitingForPlayer() {
+interface WaitingForPlayerProps {
+  roomNumber: string;
+  onCancel: () => void;
+}
+
+interface WaitingForPlayerToJoinProps {
+  roomNumber: string;
+  onCancel: () => void;
+}
+
+export function WaitingForPlayer({ roomNumber, onCancel }: WaitingForPlayerToJoinProps) {
   const [dots, setDots] = useState('');
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const dotsInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
     }, 500);
 
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => (prev < 100 ? prev + 1 : 0));
-    }, 100);
-
-    return () => {
-      clearInterval(dotsInterval);
-      clearInterval(progressInterval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center text-foreground">
+    <div className="flex flex-col items-center justify-center bg-gray-100">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="text-card-foreground p-8 max-w-md w-full space-y-6"
+        className="bg-white rounded-lg shadow-lg p-8 min-w-md w-full space-y-6 text-center"
       >
-        <div className="flex justify-center">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}>
-            <Loader2 className="w-12 h-12 text-primary" />
+        <h2 className="text-2xl font-bold text-gray-800">Waiting for Player to Join</h2>
+        <p className="text-lg text-gray-600">
+          Room: <span className="font-semibold">{roomNumber}</span>
+        </p>
+        <div className="flex justify-center space-x-4">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="w-16 h-16 rounded-full border-4 border-blue-500 border-t-transparent flex items-center justify-center"
+          >
+            <span className="text-3xl">🎲</span>
+          </motion.div>
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-4xl"
+          >
+            👥
           </motion.div>
         </div>
-        <p className="text-center text-lg">Waiting for another player to join{dots}</p>
-        <Progress value={progress} className="w-full" />
+        <p className="text-xl text-gray-700 flex items-center justify-center">
+          <span>Waiting for opponent</span>
+          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+            {dots}
+          </motion.span>
+        </p>
+        <div className="flex justify-center space-x-2">
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
+            className="text-2xl"
+          >
+            🏁
+          </motion.div>
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse', delay: 0.3 }}
+            className="text-2xl"
+          >
+            🏁
+          </motion.div>
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse', delay: 0.6 }}
+            className="text-2xl"
+          >
+            🏁
+          </motion.div>
+        </div>
+        <Button onClick={onCancel} variant="outline" className="w-full">
+          Cancel and Return to Lobby 🚪
+        </Button>
       </motion.div>
     </div>
   );
@@ -120,14 +167,30 @@ export function WaitingForYourMove() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center py-6">
-      <div className="text-2xl font-bold text-gray-700">Now your turn{dots}</div>
-      <div className="mt-4">
-        <div className="w-12 h-12 rounded-full bg-green-500 animate-bounce">
-          <svg className="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </div>
+    <div className="mb-6 flex flex-col items-center justify-center bg-gray-100">
+      <div className="text-2xl font-bold text-gray-700 flex items-center">
+        <span className="mr-2">Your turn</span>
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }}>
+          🤔
+        </motion.span>
+        <span>{dots}</span>
+      </div>
+      <div className="mt-4 flex items-center space-x-4">
+        <motion.div
+          className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 1, repeat: Infinity }}
+        >
+          <span className="text-2xl">♟️</span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="text-3xl"
+        >
+          👉
+        </motion.div>
       </div>
     </div>
   );
@@ -145,10 +208,25 @@ export function WaitingForOpponentMove() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center py-6">
-      <div className="text-2xl font-bold text-gray-700">Wait for the opponent to move{dots}</div>
-      <div className="mt-4">
-        <div className="w-12 h-12 rounded-full border-4 border-red-500 border-t-transparent animate-spin" />
+    <div className="mb-6 flex flex-col items-center justify-center bg-gray-100">
+      <div className="text-2xl font-bold text-gray-700 flex items-center">
+        <span className="mr-2">Opponent's turn</span>
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }}>
+          ⏳
+        </motion.span>
+        <span>{dots}</span>
+      </div>
+      <div className="mt-4 flex items-center space-x-4">
+        <motion.div
+          className="w-12 h-12 rounded-full border-4 border-red-500 border-t-transparent flex items-center justify-center"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+        >
+          <span className="text-2xl">🤖</span>
+        </motion.div>
+        <motion.div animate={{ x: [0, 10, 0] }} transition={{ duration: 1, repeat: Infinity }} className="text-3xl">
+          🤔
+        </motion.div>
       </div>
     </div>
   );

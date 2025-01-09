@@ -9,7 +9,6 @@ import { useDojoContext } from '@/components/DojoProvider';
 import { useGameContract } from '@/hooks/useGameContract';
 import { QueryBuilder } from '@dojoengine/sdk';
 import { SchemaType } from '@/dojo/typescript/models.gen';
-import { useFetchGameStatus } from '@/hooks/useFetchData';
 import { Header } from '@/components/Header';
 import {
   GameOver,
@@ -47,7 +46,6 @@ export default function GamePage() {
     console.log(game, 'game');
     const board: any = [];
     // 给creator地址分配 GREEN
-    //TODO color
     game.grids.forEach((grid) => {
       if (grid.occupied) {
         board[grid.name] = grid.player === game.creator ? 'GREEN' : 'ORANGE';
@@ -55,20 +53,23 @@ export default function GamePage() {
         board[grid.name] = null;
       }
     });
-    const isCreator = game.creator === address;
-    console.log(isCreator, address, 'isCreator');
-
-    let currentPlayer;
-    if (game.last_move_player !== address) {
-      currentPlayer = isCreator ? 'GREEN' : 'ORANGE';
-    } else {
-      currentPlayer = isCreator ? 'ORANGE' : 'GREEN';
-    }
+    const players = [...new Set(game.grids.filter((grid) => grid.occupied).map((grid) => grid.player))];
+    const playerMap = players.reduce(
+      (acc, player) => {
+        return {
+          ...acc,
+          [player]: player === game.creator ? 'GREEN' : 'ORANGE'
+        };
+      },
+      {} as Record<string, any>
+    );
+    console.log(players, 'players');
+    const currentPlayer = players.find((player) => player !== game.last_move_player)!;
 
     setGameState({
       ...gameState,
       board,
-      currentPlayer: currentPlayer as Player,
+      currentPlayer: playerMap[currentPlayer as string] as Player,
       lastMove: game.last_move_player,
       winner: game.status === 2 ? game.winner : null
     });
@@ -161,7 +162,7 @@ export default function GamePage() {
       <Header />
       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-60px)]">
         <div>
-          {status === 0 ? <WaitingForPlayer /> : null}
+          {status === 0 ? <WaitingForPlayer roomNumber={params!.id!} onCancel={() => navigate('/')} /> : null}
           {status === 1 ? gameState.lastMove !== address ? <WaitingForYourMove /> : <WaitingForOpponentMove /> : null}
           {status === 2 ? (
             <GameOver
@@ -172,7 +173,7 @@ export default function GamePage() {
             />
           ) : null}
         </div>
-        {status !== 2 && (
+        {status === 1 && (
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <GameBoard
               board={gameState.board}

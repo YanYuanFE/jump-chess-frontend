@@ -41,32 +41,6 @@ export interface Item {
 	player: string;
 }
 
-// Type definition for `dojo_starter::models::Players` struct
-export interface Players {
-	player: string;
-	game_id: BigNumberish;
-	position_one: Position;
-	position_two: Position;
-	can_move: boolean;
-	color: BigNumberish;
-	is_winner: boolean;
-}
-
-// Type definition for `dojo_starter::models::PlayersValue` struct
-export interface PlayersValue {
-	position_one: Position;
-	position_two: Position;
-	can_move: boolean;
-	color: BigNumberish;
-	is_winner: boolean;
-}
-
-// Type definition for `dojo_starter::models::Position` struct
-export interface Position {
-	player: string;
-	name: BigNumberish;
-}
-
 export interface SchemaType extends ISchemaType {
 	dojo_starter: {
 		Container: WithFieldOrder<Container>,
@@ -74,9 +48,6 @@ export interface SchemaType extends ISchemaType {
 		Counter: WithFieldOrder<Counter>,
 		CounterValue: WithFieldOrder<CounterValue>,
 		Item: WithFieldOrder<Item>,
-		Players: WithFieldOrder<Players>,
-		PlayersValue: WithFieldOrder<PlayersValue>,
-		Position: WithFieldOrder<Position>,
 	},
 }
 export const schema: SchemaType = {
@@ -113,29 +84,6 @@ export const schema: SchemaType = {
 			occupied: false,
 			player: "",
 		},
-		Players: {
-			fieldOrder: ['player', 'game_id', 'position_one', 'position_two', 'can_move', 'color', 'is_winner'],
-			player: "",
-			game_id: 0,
-		position_one: { fieldOrder: ['player', 'name'], player: "", name: 0, },
-		position_two: { fieldOrder: ['player', 'name'], player: "", name: 0, },
-			can_move: false,
-			color: 0,
-			is_winner: false,
-		},
-		PlayersValue: {
-			fieldOrder: ['position_one', 'position_two', 'can_move', 'color', 'is_winner'],
-		position_one: { fieldOrder: ['player', 'name'], player: "", name: 0, },
-		position_two: { fieldOrder: ['player', 'name'], player: "", name: 0, },
-			can_move: false,
-			color: 0,
-			is_winner: false,
-		},
-		Position: {
-			fieldOrder: ['player', 'name'],
-			player: "",
-			name: 0,
-		},
 	},
 };
 export enum ModelsMapping {
@@ -144,7 +92,4 @@ export enum ModelsMapping {
 	Counter = 'dojo_starter-Counter',
 	CounterValue = 'dojo_starter-CounterValue',
 	Item = 'dojo_starter-Item',
-	Players = 'dojo_starter-Players',
-	PlayersValue = 'dojo_starter-PlayersValue',
-	Position = 'dojo_starter-Position',
 }
