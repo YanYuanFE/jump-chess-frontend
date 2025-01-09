@@ -89,6 +89,7 @@ export function GameRoomList() {
           } else if (response.data && response.data[0].entityId !== '0x0') {
             console.log('subscribed', response);
             const game = (response.data[0] as GameData).models?.dojo_starter?.Container;
+            console.log(game, 'game');
             if (game) {
               navigate(`/game/${game?.game_id}`);
             }

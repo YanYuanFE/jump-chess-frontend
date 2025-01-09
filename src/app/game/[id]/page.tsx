@@ -17,6 +17,7 @@ import {
   WaitingForYourMove,
   WaitingJoin
 } from '@/components/WaitingAnimation';
+import { shortenAddress } from '@/lib/utils';
 
 const GameStatusMap = {
   0: 'Wait for player join',
@@ -34,6 +35,7 @@ export default function GamePage() {
     selectedPiece: null,
     lastMove: ''
   });
+  const [colorMap, setColorMap] = useState<any>({});
   const navigate = useNavigate();
 
   const { client, db: sdk } = useDojoContext();
@@ -63,6 +65,15 @@ export default function GamePage() {
       },
       {} as Record<string, any>
     );
+    const colorMap = players.reduce(
+      (acc, player) => {
+        const color = player === game.creator ? 'GREEN' : 'ORANGE';
+        acc[color] = player;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+    setColorMap(colorMap);
     console.log(players, 'players');
     const currentPlayer = players.find((player) => player !== game.last_move_player)!;
 
@@ -157,6 +168,13 @@ export default function GamePage() {
     const res = await waitForTransaction(tx?.transaction_hash);
   };
 
+  const PlayerTag = ({ player, color }: { player: any; color: string }) => (
+    <div className={`flex items-center space-x-2 p-2 rounded-full ${color} text-white`}>
+      <span className="font-medium">{shortenAddress(player)}</span>
+      {player === address && <span className="bg-white text-black text-xs px-2 py-1 rounded-full">YOU</span>}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -174,7 +192,7 @@ export default function GamePage() {
           ) : null}
         </div>
         {status === 1 && (
-          <div className="bg-white p-8 rounded-lg shadow-lg">
+          <div className="bg-white p-8 rounded-lg shadow-lg relative pt-10">
             <GameBoard
               board={gameState.board}
               currentPlayer={gameState.currentPlayer}
@@ -182,7 +200,11 @@ export default function GamePage() {
               onSelect={(position) => setGameState((prev) => ({ ...prev, selectedPiece: position }))}
               onMove={handleMove}
             />
-            <div className="mt-4 text-center">
+            <div className="flex justify-between my-6">
+              <PlayerTag player={colorMap['GREEN']} color="bg-green-500" />
+              <PlayerTag player={colorMap['ORANGE']} color="bg-yellow-500" />
+            </div>
+            <div className="text-center">
               <p className="text-xl">Current Player: {gameState.currentPlayer === 'GREEN' ? 'Green' : 'Orange'}</p>
             </div>
           </div>
