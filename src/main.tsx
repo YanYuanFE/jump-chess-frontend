@@ -4,14 +4,14 @@ import { Router } from '@/Router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DojoContainer } from './components/DojoProvider';
 import { init } from '@dojoengine/sdk';
-import { DojoStarterSchemaType, schema } from './dojo/typescript/models.gen';
+import { SchemaType, schema } from './dojo/typescript/models.gen';
 import { dojoConfig } from './constants/dojoConfig';
 import { globalConfig } from './constants';
 
 console.log(dojoConfig, 'dd');
 
 async function main() {
-  const db = await init<DojoStarterSchemaType>(
+  const db = await init<SchemaType>(
     {
       client: {
         //             rpcUrl: "https://api.cartridge.gg/x/starknet/sepolia",

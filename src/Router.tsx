@@ -14,6 +14,13 @@ const routerConfig = [
         }
       },
       {
+        path: 'leadboard',
+        async lazy() {
+          const Page = await import('@/app/leadboard/page');
+          return { Component: Page.default };
+        }
+      },
+      {
         path: 'game/:id',
         async lazy() {
           const Page = await import('@/app/game/[id]/page');

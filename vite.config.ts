@@ -39,5 +39,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  build: {
+    target: 'esnext'
   }
 });

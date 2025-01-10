@@ -10,7 +10,7 @@ export const useGameContract = () => {
 
   const { contract } = useContract({
     abi: GameABI,
-    address: STRK_CONTRACT_ADDRESS,
+    address: STRK_CONTRACT_ADDRESS as `0x${string}`,
     provider: provider
   });
 

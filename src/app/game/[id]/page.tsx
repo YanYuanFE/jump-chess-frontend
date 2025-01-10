@@ -12,6 +12,7 @@ import { SchemaType } from '@/dojo/typescript/models.gen';
 import { Header } from '@/components/Header';
 import {
   GameOver,
+  InvitationReceived,
   WaitingForOpponentMove,
   WaitingForPlayer,
   WaitingForYourMove,
@@ -33,7 +34,8 @@ export default function GamePage() {
     currentPlayer: 'GREEN',
     winner: null,
     selectedPiece: null,
-    lastMove: ''
+    lastMove: '',
+    creator: ''
   });
   const [colorMap, setColorMap] = useState<any>({});
   const navigate = useNavigate();
@@ -82,7 +84,8 @@ export default function GamePage() {
       board,
       currentPlayer: playerMap[currentPlayer as string] as Player,
       lastMove: game.last_move_player,
-      winner: game.status === 2 ? game.winner : null
+      winner: game.status === 2 ? game.winner : null,
+      creator: game.creator
     });
     setStatus(game.status);
   };
@@ -175,12 +178,30 @@ export default function GamePage() {
     </div>
   );
 
+  const joinRoom = async () => {
+    const id = parseInt(params.id!, 16);
+    const tx = await client.actions.joiningGame(account as any, id);
+    console.log(tx, 'tx');
+    if (!tx) return;
+    const res = await waitForTransaction(tx?.transaction_hash);
+    console.log(res);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Header />
-      <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-60px)]">
+    <div className="bg-gray-100 h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full">
         <div>
-          {status === 0 ? <WaitingForPlayer roomNumber={params!.id!} onCancel={() => navigate('/')} /> : null}
+          {status === 0 ? (
+            gameState.creator !== address ? (
+              <InvitationReceived
+                inviterAddress={gameState.creator}
+                onAcceptInvitation={joinRoom}
+                onDeclineInvitation={() => navigate('/')}
+              />
+            ) : (
+              <WaitingForPlayer roomNumber={params!.id!} onCancel={() => navigate('/')} />
+            )
+          ) : null}
           {status === 1 ? gameState.lastMove !== address ? <WaitingForYourMove /> : <WaitingForOpponentMove /> : null}
           {status === 2 ? (
             <GameOver
