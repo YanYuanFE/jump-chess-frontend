@@ -30,8 +30,6 @@ export function GameBoard({ board = [], currentPlayer, selectedPiece, onMove, on
     }
   };
 
-  console.log(selectedPiece, 'ss');
-
   return (
     <div className="relative w-[300px] h-[300px] bg-sky-100 rounded-lg">
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" strokeWidth="1" stroke="white" fill="none">

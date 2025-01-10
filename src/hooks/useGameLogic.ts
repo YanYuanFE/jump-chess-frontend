@@ -13,7 +13,9 @@ const initialState: GameState = {
   ],
   currentPlayer: 'GREEN',
   winner: null,
-  selectedPiece: null
+  selectedPiece: null,
+  lastMove: '',
+  creator: ''
 };
 
 function useGameLogic() {
@@ -65,7 +67,9 @@ function useGameLogic() {
           board: newBoard,
           currentPlayer: nextPlayer,
           winner,
-          selectedPiece: null
+          selectedPiece: null,
+          lastMove: `${from}-${to}`,
+          creator: prev.creator
         };
       });
     },

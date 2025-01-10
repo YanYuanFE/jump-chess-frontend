@@ -4,8 +4,10 @@ export type BoardState = (Player | null)[];
 export interface GameState {
   board: BoardState;
   currentPlayer: Player;
-  winner: Player | null;
+  winner: string | null;
   selectedPiece: number | null;
+  lastMove: string;
+  creator: string;
 }
 
 export interface Point {
@@ -33,3 +35,31 @@ export const POINT_COORDINATES: Point[] = [
   { x: 80, y: 20 }, // Top-right (3)
   { x: 50, y: 50 } // Center (4)
 ];
+
+export interface GameData {
+  entityId: string;
+  models: Models;
+}
+
+export interface Models {
+  dojo_starter: Dojostarter;
+}
+
+export interface Dojostarter {
+  Container: Container;
+}
+
+export interface Container {
+  status: number;
+  creator: string;
+  last_move_player: string;
+  game_id: number;
+  grids: Grid[];
+  winner: string;
+}
+
+export interface Grid {
+  player: string;
+  name: number;
+  occupied: boolean;
+}
