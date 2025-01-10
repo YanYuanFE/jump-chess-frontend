@@ -9,5 +9,5 @@ export const globalConfig = {
   KEYCHAIN_FRAME_URL: 'https://x.cartridge.gg',
   PROFILE_FRAME_URL: 'https://profile.cartridge.gg',
   CARTRIDGE_API_URL: 'https://api.cartridge.gg',
-  toriiUrl: 'http://127.0.0.1:8080'
+  toriiUrl: 'https://localhost:5100/api' //'http://43.167.194.126:8080' //''
 };

@@ -31,7 +31,13 @@ export default defineConfig({
     }
   },
   server: {
-    // https: true
-    // host: '127.0.0.1',
+    proxy: {
+      '/api': {
+        target: 'http://43.167.194.126:8080',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   }
 });
