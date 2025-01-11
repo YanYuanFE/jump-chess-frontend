@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Share2, UserPlus, X } from 'lucide-react';
+import { ArrowLeft, Frown, Loader2, Share2, Trophy, UserPlus, X } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
@@ -294,6 +294,55 @@ export function WaitingForOpponentMove() {
           🤔
         </motion.div>
       </div>
+    </div>
+  );
+}
+
+interface GameResultProps {
+  winner: string;
+  loser: string;
+  onReturnToLobby: () => void;
+}
+
+export function GameResult({ winner, loser, onReturnToLobby }: GameResultProps) {
+  const truncateAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
+
+  return (
+    <div className="flex flex-col items-center justify-center bg-gray-100">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white rounded-lg shadow-lg p-8 max-w-md min-w-[400px] w-full space-y-6 text-center"
+      >
+        <h2 className="text-3xl font-bold text-gray-800">Game Result 🏁</h2>
+        <div className="space-y-4">
+          <div className="bg-yellow-100 p-4 rounded-lg">
+            <h3 className="text-xl font-semibold text-yellow-800 flex items-center justify-center">
+              <Trophy className="mr-2" /> Winner
+            </h3>
+            <p className="text-lg text-yellow-700">{truncateAddress(winner)}</p>
+            <p className="text-2xl font-bold text-yellow-800">🏆</p>
+          </div>
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="text-xl font-semibold text-gray-700 flex items-center justify-center">
+              <Frown className="mr-2" /> Loser
+            </h3>
+            <p className="text-lg text-gray-600">{truncateAddress(loser)}</p>
+            <p className="text-2xl font-bold text-gray-700">😢</p>
+          </div>
+        </div>
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-6xl"
+        >
+          🎭
+        </motion.div>
+        <Button onClick={onReturnToLobby} className="w-full">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Return to Lobby 🏠
+        </Button>
+      </motion.div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { SchemaType } from '@/dojo/typescript/models.gen';
 import { Header } from '@/components/Header';
 import {
   GameOver,
+  GameResult,
   InvitationReceived,
   WaitingForOpponentMove,
   WaitingForPlayer,
@@ -187,6 +188,12 @@ export default function GamePage() {
     console.log(res);
   };
 
+  const isPlayer = address === colorMap['GREEN'] || address === colorMap['ORANGE'];
+
+  const isShowPlayState = status === 1 && isPlayer;
+
+  console.log(isPlayer, 'isPlayer');
+
   return (
     <div className="bg-gray-100 h-full">
       <div className="flex flex-col items-center justify-center w-full h-full">
@@ -202,14 +209,28 @@ export default function GamePage() {
               <WaitingForPlayer roomNumber={params!.id!} onCancel={() => navigate('/')} />
             )
           ) : null}
-          {status === 1 ? gameState.lastMove !== address ? <WaitingForYourMove /> : <WaitingForOpponentMove /> : null}
+          {isShowPlayState ? (
+            gameState.lastMove !== address ? (
+              <WaitingForYourMove />
+            ) : (
+              <WaitingForOpponentMove />
+            )
+          ) : null}
           {status === 2 ? (
-            <GameOver
-              isWinner={gameState.winner === address}
-              onReturnToLobby={() => {
-                navigate('/');
-              }}
-            />
+            address === colorMap['GREEN'] || address === colorMap['ORANGE'] ? (
+              <GameOver
+                isWinner={gameState.winner === address}
+                onReturnToLobby={() => {
+                  navigate('/');
+                }}
+              />
+            ) : (
+              <GameResult
+                winner={gameState.winner!}
+                loser={gameState.winner! === colorMap['GREEN'] ? colorMap['ORANGE'] : colorMap['GREEN']}
+                onReturnToLobby={() => navigate('/')}
+              />
+            )
           ) : null}
         </div>
         {status === 1 && (

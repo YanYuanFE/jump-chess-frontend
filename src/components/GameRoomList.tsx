@@ -121,7 +121,7 @@ export function GameRoomList() {
   };
 
   const joinRoom = async (node: any) => {
-    const id = parseInt(node?.game_id, 16);
+    const id = node?.game_id;
     if (addAddressPadding(node?.creator) !== address && node?.status === 0) {
       console.log(account, 'ac');
       const tx = await client.actions.joiningGame(account as any, id);
@@ -177,6 +177,7 @@ export function GameRoomList() {
               <TableHead>Created By</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Players</TableHead>
+              <TableHead>Winner</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -187,10 +188,12 @@ export function GameRoomList() {
                 <TableCell>{shortenAddress(room.creator)}</TableCell>
                 <TableCell>{getStatusBadge(room.status)}</TableCell>
                 <TableCell>{`${room.status === 0 ? 1 : 2}/2`}</TableCell>
-                <TableCell>
+                <TableCell>{room.status === 2 ? shortenAddress(room.winner) : '-'}</TableCell>
+                <TableCell className="flex gap-2 items-end">
                   <Button onClick={() => joinRoom(room)} disabled={room.status !== 0}>
                     Join
                   </Button>
+                  <Button onClick={() => navigate(`/game/${room.game_id}`)}>Visit</Button>
                 </TableCell>
               </TableRow>
             ))}
