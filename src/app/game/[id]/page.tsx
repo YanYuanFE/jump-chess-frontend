@@ -14,6 +14,7 @@ import {
   GameOver,
   GameResult,
   InvitationReceived,
+  MovingInProgress,
   WaitingForOpponentMove,
   WaitingForPlayer,
   WaitingForYourMove,
@@ -44,6 +45,7 @@ export default function GamePage() {
   const { client, db: sdk } = useDojoContext();
   const { waitForTransaction } = useGameContract();
   const [status, setStatus] = useState(0);
+  const [isMoving, setIsMoving] = useState(false);
 
   console.log(sdk, gameState, address, 'state');
 
@@ -167,9 +169,14 @@ export default function GamePage() {
   }, [sdk, address, params!.id!]);
 
   const handleMove = async (from: number, to: number) => {
-    const id = parseInt(params!.id!, 16);
-    const tx = await client.actions.move(account as any, from, to, id);
-    const res = await waitForTransaction(tx?.transaction_hash);
+    try {
+      if (isMoving) return;
+      setIsMoving(true);
+      const id = parseInt(params!.id!, 16);
+      const tx = await client.actions.move(account as any, from, to, id);
+    } finally {
+      setIsMoving(false);
+    }
   };
 
   const PlayerTag = ({ player, color }: { player: any; color: string }) => (
@@ -190,7 +197,7 @@ export default function GamePage() {
 
   const isPlayer = address === colorMap['GREEN'] || address === colorMap['ORANGE'];
 
-  const isShowPlayState = status === 1 && isPlayer;
+  const isShowPlayState = status === 1 && isPlayer && !isMoving;
 
   console.log(isPlayer, 'isPlayer');
 
@@ -209,6 +216,7 @@ export default function GamePage() {
               <WaitingForPlayer roomNumber={params!.id!} onCancel={() => navigate('/')} />
             )
           ) : null}
+          {isMoving ? <MovingInProgress /> : null}
           {isShowPlayState ? (
             gameState.lastMove !== address ? (
               <WaitingForYourMove />

@@ -346,3 +346,60 @@ export function GameResult({ winner, loser, onReturnToLobby }: GameResultProps) 
     </div>
   );
 }
+
+export function MovingInProgress() {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center pb-6">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-6 text-center"
+      >
+        {/* <h2 className="text-2xl font-bold text-gray-800">Making Your Move 🤔</h2>
+        <div className="flex justify-center items-center space-x-4">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}>
+            <Loader2 className="w-12 h-12 text-blue-500" />
+          </motion.div>
+          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 1, repeat: Infinity }} className="text-4xl">
+            ♟️
+          </motion.div>
+        </div> */}
+        <p className="text-xl text-gray-700 flex items-center justify-center">Processing your move{dots}</p>
+        <div className="flex justify-center space-x-2">
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-2xl"
+          >
+            🧠
+          </motion.span>
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+            className="text-2xl"
+          >
+            ⏳
+          </motion.span>
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+            className="text-2xl"
+          >
+            🔄
+          </motion.span>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

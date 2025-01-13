@@ -154,7 +154,7 @@ export function GameRoomList() {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="relative w-64">
+        <div className="relative w-80">
           <Input
             type="text"
             placeholder="Search by room number or creator"
