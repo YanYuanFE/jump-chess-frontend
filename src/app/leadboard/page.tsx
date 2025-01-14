@@ -51,7 +51,12 @@ export default function Leaderboard() {
                 wins: addressCounts[address]
               });
             });
-            const containers = leaderboard.sort((a, b) => b.wins - a.wins);
+            const containers = leaderboard
+              .sort((a, b) => b.wins - a.wins)
+              .map((it, i) => ({
+                ...it,
+                rank: i + 1
+              }));
             setLeaderboard(containers);
           }
         }
@@ -81,6 +86,8 @@ export default function Leaderboard() {
         return '🏅';
     }
   };
+
+  console.log(filteredLeaderboard, 'rank');
 
   return (
     <div className="container mx-auto py-10">
