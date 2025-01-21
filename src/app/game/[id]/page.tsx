@@ -187,7 +187,7 @@ export default function GamePage() {
   );
 
   const joinRoom = async () => {
-    const id = parseInt(params.id!, 16);
+    const id = params.id!;
     const tx = await client.actions.joiningGame(account as any, id);
     console.log(tx, 'tx');
     if (!tx) return;
