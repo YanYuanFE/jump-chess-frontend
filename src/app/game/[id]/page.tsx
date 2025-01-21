@@ -172,7 +172,7 @@ export default function GamePage() {
     try {
       if (isMoving) return;
       setIsMoving(true);
-      const id = parseInt(params!.id!, 16);
+      const id = params!.id!;
       const tx = await client.actions.move(account as any, from, to, id);
     } finally {
       setIsMoving(false);
