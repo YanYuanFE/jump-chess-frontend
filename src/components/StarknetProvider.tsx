@@ -7,6 +7,7 @@ import ControllerConnector from '@cartridge/connector/controller';
 import { Policy } from '@cartridge/controller';
 import { globalConfig } from '@/constants';
 import manifest from '../abi/manifest_dev.json';
+import { constants } from 'starknet';
 
 export const STRK_CONTRACT_ADDRESS = manifest.contracts[0].address;
 
@@ -27,6 +28,15 @@ const policies: Policy[] = [
 
 const controller = new ControllerConnector({
   policies,
+  defaultChainId: constants.StarknetChainId.SN_SEPOLIA,
+  chains: [
+    {
+      rpcUrl: 'https://api.cartridge.gg/x/starknet/sepolia'
+    }
+    // {
+    //   rpcUrl: 'https://api.cartridge.gg/x/starknet/mainnet'
+    // }
+  ],
   rpc: globalConfig.RPC_SEPOLIA,
   url: globalConfig.KEYCHAIN_FRAME_URL,
   profileUrl: globalConfig.PROFILE_FRAME_URL,

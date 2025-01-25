@@ -10,8 +10,8 @@
     "torii": "torii --world 0xf58e954491c0ce3f0274592179ccc552815327c2f0e3c2c8c382bafbe7fc1e  --http.cors_origins '*' --rpc https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
   },
   "dependencies": {
-    "@cartridge/connector": "^0.5.5",
-    "@cartridge/controller": "^0.5.5",
+    "@cartridge/connector": "^0.6.0",
+    "@cartridge/controller": "^0.6.0",
     "@cartridge/ui-next": "0.5.0-alpha.1",
     "@dojoengine/core": "^1.0.7",
     "@dojoengine/sdk": "^1.0.7",
