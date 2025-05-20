@@ -63,3 +63,5 @@ export interface Grid {
   name: number;
   occupied: boolean;
 }
+
+export type GameMode = 'ai' | 'multiplayer';

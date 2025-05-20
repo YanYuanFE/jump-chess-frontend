@@ -14,7 +14,21 @@ const routerConfig = [
         }
       },
       {
-        path: 'leadboard',
+        path: 'rooms',
+        async lazy() {
+          const Page = await import('@/app/rooms/page');
+          return { Component: Page.default };
+        }
+      },
+      {
+        path: 'create-room',
+        async lazy() {
+          const Page = await import('@/app/create-room/page');
+          return { Component: Page.default };
+        }
+      },
+      {
+        path: 'leaderboard',
         async lazy() {
           const Page = await import('@/app/leadboard/page');
           return { Component: Page.default };

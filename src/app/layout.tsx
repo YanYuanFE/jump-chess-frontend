@@ -1,18 +1,16 @@
 import './globals.css';
 import { StarknetProvider } from '@/components/StarknetProvider';
-import { AuthProvider } from '@/components/AuthProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { Outlet } from 'react-router-dom';
-import { Header } from '@/components/Header';
+import { Layout } from '@/components/Layout';
 
 export default function RootLayout() {
   return (
     <StarknetProvider>
-      <Header />
-      <div className="h-[calc(100vh-60px)]">
+      <Layout>
         <Outlet />
-        <Toaster />
-      </div>
+      </Layout>
+      <Toaster richColors />
     </StarknetProvider>
   );
 }

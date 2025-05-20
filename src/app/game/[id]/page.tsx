@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { GameBoard } from '@/components/game-board';
-import { useGameSocket } from '@/hooks/useGameSocket';
 import { Container, GameData, GameState, Player } from '@/types';
 import { useAccount } from '@starknet-react/core';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,7 +8,6 @@ import { useDojoContext } from '@/components/DojoProvider';
 import { useGameContract } from '@/hooks/useGameContract';
 import { QueryBuilder } from '@dojoengine/sdk';
 import { SchemaType } from '@/dojo/typescript/models.gen';
-import { Header } from '@/components/Header';
 import {
   GameOver,
   GameResult,

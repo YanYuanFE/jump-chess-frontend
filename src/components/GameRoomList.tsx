@@ -148,7 +148,12 @@ export function GameRoomList() {
     <div className="container mx-auto py-6">
       <div className="relative flex justify-between py-6">
         <h1 className="text-2xl font-bold mb-6">Game Room List</h1>
-        <Button onClick={createGame} loading={createLoading}>
+        <Button
+          onClick={() => {
+            navigate('/create-room');
+          }}
+          loading={createLoading}
+        >
           Create Game
         </Button>
       </div>

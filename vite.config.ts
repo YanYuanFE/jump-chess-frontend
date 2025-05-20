@@ -37,6 +37,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/agent-api': {
+        target: 'http://43.167.194.126:8866',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/agent-api/, '')
       }
     }
   },
