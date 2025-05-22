@@ -58,10 +58,10 @@ const CreateRoom = () => {
           )
           .build(),
         callback: (response) => {
+          console.log('subscribed', response);
           if (response.error) {
             console.error('Error setting up entity sync:', response.error);
           } else if (response.data && response.data[0].entityId !== '0x0') {
-            console.log('subscribed', response);
             const game = (response.data[0] as GameData).models?.dojo_starter?.Container;
             console.log(game, 'game');
             if (game) {
