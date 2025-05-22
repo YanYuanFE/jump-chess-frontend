@@ -5,6 +5,10 @@
       "destination": "http://43.167.194.126:8080/:match*"
     },
     {
+      "source": "/agent-api/:match*",
+      "destination": "http://43.167.194.126:8866/:match*"
+    },
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }
