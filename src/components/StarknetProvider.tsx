@@ -1,33 +1,44 @@
 'use client';
 
 import { Chain, mainnet, sepolia } from '@starknet-react/chains';
-import { argent, braavos, jsonRpcProvider, publicProvider, StarknetConfig, starkscan } from '@starknet-react/core';
+import { argent, braavos, jsonRpcProvider, StarknetConfig, starkscan } from '@starknet-react/core';
 import { PropsWithChildren } from 'react';
 import ControllerConnector from '@cartridge/connector/controller';
-import { Policy } from '@cartridge/controller';
+import { Policy, SessionPolicies } from '@cartridge/controller';
 import { globalConfig } from '@/constants';
 import manifest from '../abi/manifest_dev.json';
 import { constants } from 'starknet';
 
 export const STRK_CONTRACT_ADDRESS = manifest.contracts[0].address;
 
-const policies: Policy[] = [
-  {
-    target: STRK_CONTRACT_ADDRESS,
-    method: 'create_game'
-  },
-  {
-    target: STRK_CONTRACT_ADDRESS,
-    method: 'joining_game'
-  },
-  {
-    target: STRK_CONTRACT_ADDRESS,
-    method: 'move'
+const sessionPolicies: SessionPolicies = {
+  contracts: {
+    [STRK_CONTRACT_ADDRESS]: {
+      name: 'Jump Chess',
+      description: 'Jump Chess Game',
+      methods: [
+        {
+          name: 'create_game',
+          entrypoint: 'create_game',
+          description: 'Create a new game'
+        },
+        {
+          name: 'joining_game',
+          entrypoint: 'joining_game',
+          description: 'Join a game'
+        },
+        {
+          name: 'move',
+          entrypoint: 'move',
+          description: 'Move a piece'
+        }
+      ]
+    }
   }
-];
+};
 
 const controller = new ControllerConnector({
-  policies,
+  policies: sessionPolicies,
   defaultChainId: constants.StarknetChainId.SN_SEPOLIA,
   chains: [
     {
@@ -37,7 +48,7 @@ const controller = new ControllerConnector({
     //   rpcUrl: 'https://api.cartridge.gg/x/starknet/mainnet'
     // }
   ],
-  rpc: globalConfig.RPC_SEPOLIA,
+  // rpc: globalConfig.RPC_SEPOLIA,
   url: globalConfig.KEYCHAIN_FRAME_URL,
   profileUrl: globalConfig.PROFILE_FRAME_URL,
   slot: 'profile-example',
