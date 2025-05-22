@@ -19,6 +19,9 @@ import {
   WaitingJoin
 } from '@/components/WaitingAnimation';
 import { shortenAddress } from '@/lib/utils';
+import { globalConfig } from '@/constants';
+import { Badge } from '@/components/ui/badge';
+import { agentMove } from '@/services';
 
 const GameStatusMap = {
   0: 'Wait for player join',
@@ -44,21 +47,43 @@ export default function GamePage() {
   const { waitForTransaction } = useGameContract();
   const [status, setStatus] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
+  const [isAiMode, setIsAiMode] = useState(false);
+  const [agentData, setAgentData] = useState<any>({});
 
   console.log(sdk, gameState, address, 'state');
 
   const updateGameState = (game: Container) => {
     console.log(game, 'game');
     const board: any = [];
+    const tempData: any = {};
     // 给creator地址分配 GREEN
     game.grids.forEach((grid) => {
       if (grid.occupied) {
+        if (grid.player === globalConfig.aiAddress) {
+          if (!tempData.b1) {
+            tempData.b1 = String(grid.name);
+          } else {
+            tempData.b2 = String(grid.name);
+          }
+        } else {
+          if (!tempData.a1) {
+            tempData.a1 = String(grid.name);
+          } else {
+            tempData.a2 = String(grid.name);
+          }
+        }
         board[grid.name] = grid.player === game.creator ? 'GREEN' : 'ORANGE';
       } else {
+        tempData.empty_positon = String(grid.name);
         board[grid.name] = null;
       }
     });
+    console.log(tempData, 'tempData');
+    setAgentData(tempData);
     const players = [...new Set(game.grids.filter((grid) => grid.occupied).map((grid) => grid.player))];
+    if (players.includes(globalConfig.aiAddress)) {
+      setIsAiMode(true);
+    }
     const playerMap = players.reduce(
       (acc, player) => {
         return {
@@ -77,7 +102,7 @@ export default function GamePage() {
       {} as Record<string, string>
     );
     setColorMap(colorMap);
-    console.log(players, 'players');
+    console.log(players, colorMap, gameState, 'players');
     const currentPlayer = players.find((player) => player !== game.last_move_player)!;
 
     setGameState({
@@ -166,12 +191,27 @@ export default function GamePage() {
     };
   }, [sdk, address, params!.id!]);
 
+  const handleAIMove = async (from: number, to: number) => {
+    agentMove({
+      move_a_from: String(from),
+      move_a_to: String(to),
+      game_id: String(params!.id!),
+      ...agentData
+    });
+  };
+
   const handleMove = async (from: number, to: number) => {
     try {
       if (isMoving) return;
       setIsMoving(true);
       const id = params!.id!;
       const tx = await client.actions.move(account as any, from, to, id);
+      if (!tx) return;
+      const res = await waitForTransaction(tx?.transaction_hash);
+      if (isAiMode) {
+        handleAIMove(from, to);
+      }
+      console.log(res, isAiMode, 'ai');
     } finally {
       setIsMoving(false);
     }
@@ -197,11 +237,16 @@ export default function GamePage() {
 
   const isShowPlayState = status === 1 && isPlayer && !isMoving;
 
+  const currentUserColor = address === colorMap['GREEN'] ? 'GREEN' : 'ORANGE';
+
   console.log(isPlayer, 'isPlayer');
 
   return (
-    <div className="bg-gray-100 h-full">
+    <div className="bg-gray-100 h-full container mx-auto">
       <div className="flex flex-col items-center justify-center w-full h-full">
+        <div className="flex gap-2 py-4">
+          <Badge variant="outline">{isAiMode ? 'AI Mode' : 'PVP Mode'}</Badge>
+        </div>
         <div>
           {status === 0 ? (
             gameState.creator !== address ? (

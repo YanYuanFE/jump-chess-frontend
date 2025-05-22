@@ -95,7 +95,7 @@ const Home = () => {
             </div>
             <div className="bg-gray-50 p-4 rounded-md">
               <h3 className="font-bold mb-2">3. Start Playing</h3>
-              <p className="text-gray-600">Make your moves and try to capture all opponent's pieces.</p>
+              <p className="text-gray-600">Make your moves and try to capture all opponent&apos;s pieces.</p>
             </div>
           </div>
         </div>
