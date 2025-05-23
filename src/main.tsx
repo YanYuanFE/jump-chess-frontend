@@ -28,7 +28,8 @@ async function main() {
         version: '1.0',
         chainId: 'SEPOLIA',
         revision: '1'
-      }
+      },
+      withLogger: true
     },
     schema
   );
