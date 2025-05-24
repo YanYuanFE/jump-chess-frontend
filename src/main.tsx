@@ -18,7 +18,7 @@ async function main() {
         //   toriiUrl: "https://api.cartridge.gg/x/ryosepolia2/torii/graphql",
         //   toriiWsUrl: "wss://api.cartridge.gg/x/ryosepolia2/torii/graphql/ws",
         rpcUrl: dojoConfig.rpcUrl,
-        toriiUrl: globalConfig.toriiUrl,
+        toriiUrl: dojoConfig.toriiUrl,
         relayUrl: dojoConfig.relayUrl,
         worldAddress: dojoConfig.manifest.world.address
       },
