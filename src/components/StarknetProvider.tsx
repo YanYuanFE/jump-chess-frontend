@@ -4,14 +4,13 @@ import { Chain, mainnet, sepolia } from '@starknet-react/chains';
 import { argent, braavos, jsonRpcProvider, StarknetConfig, starkscan } from '@starknet-react/core';
 import { PropsWithChildren } from 'react';
 import ControllerConnector from '@cartridge/connector/controller';
-import { Policy, SessionPolicies } from '@cartridge/controller';
 import { globalConfig } from '@/constants';
 import manifest from '../abi/manifest_dev.json';
 import { constants } from 'starknet';
 
 export const STRK_CONTRACT_ADDRESS = manifest.contracts[0].address;
 
-const sessionPolicies: SessionPolicies = {
+const sessionPolicies = {
   contracts: {
     [STRK_CONTRACT_ADDRESS]: {
       name: 'Jump Chess',
@@ -39,6 +38,7 @@ const sessionPolicies: SessionPolicies = {
 
 const controller = new ControllerConnector({
   policies: sessionPolicies,
+  // rpc: 'https://api.cartridge.gg/x/starknet/sepolia',
   defaultChainId: constants.StarknetChainId.SN_SEPOLIA,
   chains: [
     {
