@@ -52,7 +52,7 @@ const controller = new ControllerConnector({
   url: globalConfig.KEYCHAIN_FRAME_URL,
   profileUrl: globalConfig.PROFILE_FRAME_URL,
   slot: 'profile-example',
-  preset: 'cartidge',
+  preset: 'cartridge',
   namespace: 'dopewars',
   tokens: {
     erc20: [
