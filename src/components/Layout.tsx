@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0 flex items-center">
-                <GamepadIcon className="h-8 w-8 text-game-blue" />
+                <img src="./logo.png" className="h-8 w-8 text-game-blue" />
                 <span className="ml-2 text-xl font-bold text-gray-900">Jump Well Chess</span>
               </Link>
               <div className="hidden md:ml-6 md:flex md:space-x-8">

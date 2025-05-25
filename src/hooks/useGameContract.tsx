@@ -17,7 +17,7 @@ export const useGameContract = () => {
   contract?.connect(account!);
 
   const waitForTransaction = async (hash: any) => {
-    toast.success('Transaction has been submitted');
+    // toast.success('Transaction has been submitted');
 
     const recipient = await provider.waitForTransaction(hash);
 
@@ -27,7 +27,7 @@ export const useGameContract = () => {
       toast.error('Transaction has failed');
     }
     const events = contract?.parseEvents(recipient);
-    console.log(events, 'ee');
+    console.log(events, 'events');
     return recipient;
   };
 

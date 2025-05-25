@@ -218,9 +218,15 @@ export default function GamePage() {
   };
 
   const PlayerTag = ({ player, color }: { player: any; color: string }) => (
-    <div className={`flex items-center space-x-2 p-2 rounded-full ${color} text-white`}>
+    <div
+      className={`flex items-center gap-2 p-2 rounded-full ${color === 'GREEN' ? 'bg-green-500' : 'bg-yellow-500'} text-white`}
+    >
       <span className="font-medium">{shortenAddress(player)}</span>
-      {player === address && <span className="bg-white text-black text-xs px-2 py-1 rounded-full">YOU</span>}
+      {player === globalConfig.aiAddress && (
+        <span className="bg-white text-black text-xs px-2 py-1 rounded-full">AI</span>
+      )}
+      {player === address && <span className="bg-white text-black text-xs px-2 py-1 rounded-full">You</span>}
+      <span>{gameState.currentPlayer === color ? 'Playing' : ''}</span>
     </div>
   );
 
@@ -238,15 +244,19 @@ export default function GamePage() {
   const isShowPlayState = status === 1 && isPlayer && !isMoving;
 
   const currentUserColor = address === colorMap['GREEN'] ? 'GREEN' : 'ORANGE';
+  const opponentColor = currentUserColor === 'GREEN' ? 'ORANGE' : 'GREEN';
 
   console.log(isPlayer, 'isPlayer');
 
   return (
     <div className="bg-gray-100 h-full container mx-auto">
       <div className="flex flex-col items-center justify-center w-full h-full">
-        <div className="flex gap-2 py-4">
-          <Badge variant="outline">{isAiMode ? 'AI Mode' : 'PVP Mode'}</Badge>
-        </div>
+        {status !== 0 ? (
+          <div className="flex gap-2 py-4">
+            <Badge variant="outline">{isAiMode ? 'AI Mode' : 'PVP Mode'}</Badge>
+          </div>
+        ) : null}
+
         <div>
           {status === 0 ? (
             gameState.creator !== address ? (
@@ -286,6 +296,9 @@ export default function GamePage() {
         </div>
         {status === 1 && (
           <div className="bg-white p-8 rounded-lg shadow-lg relative pt-10">
+            <div className="flex justify-center mb-4">
+              <PlayerTag player={colorMap[opponentColor]} color={opponentColor} />
+            </div>
             <GameBoard
               board={gameState.board}
               currentPlayer={gameState.currentPlayer}
@@ -293,12 +306,8 @@ export default function GamePage() {
               onSelect={(position) => setGameState((prev) => ({ ...prev, selectedPiece: position }))}
               onMove={handleMove}
             />
-            <div className="flex justify-between my-6">
-              <PlayerTag player={colorMap['GREEN']} color="bg-green-500" />
-              <PlayerTag player={colorMap['ORANGE']} color="bg-yellow-500" />
-            </div>
-            <div className="text-center">
-              <p className="text-xl">Current Player: {gameState.currentPlayer === 'GREEN' ? 'Green' : 'Orange'}</p>
+            <div className="flex justify-center mt-4">
+              <PlayerTag player={colorMap[currentUserColor]} color={currentUserColor} />
             </div>
           </div>
         )}
