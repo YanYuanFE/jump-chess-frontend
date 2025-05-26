@@ -48,7 +48,9 @@ const CreateRoom = () => {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
     const subscribe = async () => {
+      console.log(address, 'address');
       if (!address) return;
+      console.log(address, sdk, 'subscribe start');
       const subscription = await sdk?.subscribeEntityQuery({
         query: new QueryBuilder<SchemaType>()
           .namespace('dojo_starter', (n) =>
